@@ -11,6 +11,13 @@ const WS_PORT = 8080;
 const tcpServer = net.createServer();
 const websocketServer = new WebSocketServer({ port: WS_PORT });
 
+const TEMP_MIN = 20;
+const TEMP_MAX = 80;
+const TIMER = 5000;
+
+let count = 0;
+let exceedRangeTime : (number | null) = null;
+
 tcpServer.on("connection", (socket) => {
   console.log("TCP client connected");
 
@@ -18,6 +25,29 @@ tcpServer.on("connection", (socket) => {
     console.log(`Received: ${msg.toString()}`);
 
     const jsonData: VehicleData = JSON.parse(msg.toString());
+
+    if ( jsonData.battery_temperature < TEMP_MIN
+      || jsonData.battery_temperature > TEMP_MAX ) {
+
+        const currentTime = jsonData.timestamp;
+        count++;
+        
+        if(!exceedRangeTime) {
+          exceedRangeTime = currentTime;
+        }
+        if(count > 3 && currentTime - exceedRangeTime <= TIMER){
+          console.log(
+            `Error: Timestamp ${Date.now()}, Range exceeded 3 times in 5 seconds`
+          );
+          count = 0;
+          exceedRangeTime = null;
+
+        } else if ( currentTime - exceedRangeTime > TIMER) {
+          count = 1;
+          exceedRangeTime = currentTime;
+        }
+
+      }
 
     // Send JSON over WS to frontend clients
     websocketServer.clients.forEach(function each(client) {
