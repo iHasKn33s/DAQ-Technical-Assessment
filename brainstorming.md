@@ -5,6 +5,10 @@ This file is used to document your thoughts, approaches and research conducted a
 ## Firmware
 
 ## Telemetry
+
+1.
+as we cannot edit data-emulator we need to check for an extra '}' bracket on the second last digit of the string
+2.
 server.ts initial plan
 if exceed ranges
 record time
@@ -14,7 +18,7 @@ check if it > 3 & < 5000 MS
 console log
 reset the count and time
 should loop
-
-as we cannot edit data-emulator we need to check for an extra '}' bracket on the second last digit of the string
+3.
+should be a simple if to check for red then yellow and if none then green.
 
 ## Cloud
