@@ -24,6 +24,13 @@ tcpServer.on("connection", (socket) => {
   socket.on("data", (msg) => {
     console.log(`Received: ${msg.toString()}`);
 
+    //removing the extra "}"
+    let parsedMsg = msg.toString();
+
+    if (parsedMsg.lastIndexOf("}") !== parsedMsg.length - 1) {
+        parsedMsg = parsedMsg.slice(0, parsedMsg.lastIndexOf("}") + 1); 
+    }
+
     const jsonData: VehicleData = JSON.parse(msg.toString());
 
     if ( jsonData.battery_temperature < TEMP_MIN
